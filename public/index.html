@@ -1,0 +1,243 @@
+
+
+<!doctype html>
+
+<html lang="km">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="theme-color" content="#101510">
+
+<title>NSH BARBER AI</title>
+
+<style>
+
+:root{--bg:#0d110e;--panel:#171e19;--line:#2a382d;--lime:#b8ef65;--muted:#aab5ad;--white:#f5f8f5}
+
+*{box-sizing:border-box}
+
+body{margin:0;background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+
+header{text-align:center;padding:25px 15px;background:linear-gradient(145deg,#1c2a1e,#0d110e);border-bottom:1px solid var(--line)}
+
+.logo{font-size:27px;font-weight:900;letter-spacing:2px}
+
+.tag{color:var(--lime);font-size:11px;letter-spacing:2px}
+
+main{max-width:680px;margin:auto;padding:14px}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0}
+
+h2{font-size:17px;margin:0 0 12px}
+
+p,.hint{color:var(--muted);font-size:13px;line-height:1.55}
+
+label{display:block;margin:12px 0 6px;font-size:13px}
+
+input,select,button{font:inherit}
+
+input[type=file],select{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:#0d140f;color:white}
+
+button{width:100%;padding:14px;border:0;border-radius:12px;background:var(--lime);color:#142014;font-weight:800;margin-top:14px}
+
+button:disabled{opacity:.55}
+
+.preview{display:none;width:100%;max-height:350px;object-fit:contain;margin-top:12px;border-radius:12px}
+
+.result{white-space:pre-wrap;line-height:1.65;background:#101711;border:1px solid #435543;border-radius:12px;padding:14px;margin-top:14px;display:none}
+
+.status{font-size:13px;color:var(--lime);margin-top:10px}
+
+footer{text-align:center;color:#718074;font-size:11px;padding:18px}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">NSH BARBER</div>
+
+<div class="tag">AI SMART HAIR STUDIO</div>
+
+<p>YOUR STYLE. YOUR IDENTITY.</p>
+
+</header>
+
+<main>
+
+<div class="card">
+
+<h2>១. រូបថតភ្ញៀវ</h2>
+
+<p>សូមសុំការយល់ព្រមពីភ្ញៀវមុនថត។ ប្រើរូបមុខច្បាស់ មានពន្លឺល្អ និងមិនបាំងមុខ។ រូបនឹងត្រូវផ្ញើទៅ Server របស់អ្នក ដើម្បីវិភាគដោយ AI។</p>
+
+<input id="photo" type="file" accept="image/jpeg,image/png,image/webp" capture="user">
+
+<img id="preview" class="preview">
+
+</div>
+
+<div class="card">
+
+<h2>២. ព័ត៌មានសក់</h2>
+
+<label>ប្រភេទសក់</label>
+
+<select id="hair">
+
+<option>ត្រង់</option><option>រលក</option><option>រួញ</option><option>រួញខ្លាំង</option>
+
+</select>
+
+<label>ប្រវែងសក់</label>
+
+<select id="length">
+
+<option>ខ្លី</option><option>មធ្យម</option><option>វែង</option>
+
+</select>
+
+<label>ស្ទាយចង់បាន</label>
+
+<select id="goal">
+
+<option>ស្អាតសាមញ្ញ និងងាយថែ</option>
+
+<option>ទាន់សម័យ</option>
+
+<option>បែបកូរ៉េ</option>
+
+<option>Classic / Professional</option>
+
+<option>Fade / Barber style</option>
+
+</select>
+
+<label>ពណ៌សក់ចង់បាន</label>
+
+<select id="color">
+
+<option>រក្សាពណ៌ធម្មជាតិ</option>
+
+<option>ខ្មៅធម្មជាតិ</option>
+
+<option>ត្នោតសូកូឡា</option>
+
+<option>ត្នោតផេះ</option>
+
+<option>Beige Blonde</option>
+
+<option>Golden Blonde</option>
+
+<option>Silver / Ash</option>
+
+</select>
+
+<button id="go">វិភាគដោយ AI</button>
+
+<div id="status" class="status"></div>
+
+<div id="result" class="result"></div>
+
+</div>
+
+</main>
+
+<footer>NSH BARBER AI · AI image consultation</footer>
+
+<script>
+
+const photo=document.querySelector('#photo');
+
+const preview=document.querySelector('#preview');
+
+const go=document.querySelector('#go');
+
+const statusEl=document.querySelector('#status');
+
+const result=document.querySelector('#result');
+
+photo.addEventListener('change',()=>{
+
+const f=photo.files[0];
+
+if(f){
+
+preview.src=URL.createObjectURL(f);
+
+preview.style.display='block';
+
+result.style.display='none';
+
+}
+
+});
+
+go.addEventListener('click',async()=>{
+
+const f=photo.files[0];
+
+if(!f){
+
+alert('សូមជ្រើសរើសរូបថតជាមុនសិន');
+
+return;
+
+}
+
+go.disabled=true;
+
+statusEl.textContent='កំពុងផ្ញើរូប និងវិភាគដោយ AI…';
+
+result.style.display='none';
+
+const data=new FormData();
+
+data.append('photo',f);
+
+data.append('hairType',document.querySelector('#hair').value);
+
+data.append('length',document.querySelector('#length').value);
+
+data.append('styleGoal',document.querySelector('#goal').value);
+
+data.append('colorGoal',document.querySelector('#color').value);
+
+try{
+
+const r=await fetch('/api/analyze',{method:'POST',body:data});
+
+const j=await r.json();
+
+if(!r.ok)throw new Error(j.error||'មានបញ្ហា');
+
+result.textContent=j.analysis;
+
+result.style.display='block';
+
+statusEl.textContent='វិភាគរួចរាល់';
+
+}catch(e){
+
+statusEl.textContent=e.message;
+
+}finally{
+
+go.disabled=false;
+
+}
+
+});
+
+</script>
+
+</body>
+
+</html>
